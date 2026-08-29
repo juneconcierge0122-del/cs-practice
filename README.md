@@ -17,6 +17,11 @@ cs-practice/
 │   ├── tree/
 │   └── ...
 ├── leetcode/
+│   ├── python/
+│   ├── python3/
+│   ├── c/
+│   ├── cpp/
+│   └── ...
 ├── notes/
 │   ├── git-notes/
 │   └── linux-notes/
