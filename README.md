@@ -5,13 +5,17 @@ Every git notes, along with the Python/C/C++ engineering and algorithm exercises
 ## Structure
 
 ```
-cs-practice/
-├── git-notes/          # For git record
-├── data-structure/     # For common data-structure
-│   ├─ leetcodes/
-│   ├─ algorithms/
-│   └─ ends-and-odds/
 └── README.md
+
+cs-practice/
+├── README.md
+├── git-notes/                 # For git record
+├── linux-notes/
+│   └── process-limits.md      # ex: nproc 
+└── data-structure/            # For common data-structure
+    ├── leetcodes/ 
+    ├── algorithms/
+    └── odds-and-ends/
 
 ```
 
