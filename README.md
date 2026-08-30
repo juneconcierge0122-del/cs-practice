@@ -22,6 +22,9 @@ cs-practice/
 │   ├── c/
 │   ├── cpp/
 │   └── ...
+├── parallel-computing/
+│   ├── ex1_matmul/
+│   └── ...
 ├── notes/
 │   ├── git-notes/
 │   └── linux-notes/
