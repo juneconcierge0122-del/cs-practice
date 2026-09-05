@@ -79,5 +79,43 @@ int main(void){
     DestroyList(&L);
 
 
+    printf("-------------------\n");
+
+    SqList L1, L2, L3, L4;
+
+    InitList(&L1);
+    InitList(&L2);
+    InitList(&L3);
+    InitList(&L4);
+
+    ListInsert(&L1, 1, 1);
+    ListInsert(&L1, 2, 2);
+    ListInsert(&L1, 3, 3);
+    ListInsert(&L1, 4, 4);
+
+
+    ListInsert(&L2, 1, 11);
+    ListInsert(&L2, 2, 27);
+    ListInsert(&L2, 3, 33);
+    ListInsert(&L2, 4, 42);
+    ListInsert(&L2, 5, 59);
+    
+    ListInsert(&L3, 5, 999);
+    printf("Insert at i=5 on empty list: status=%d (expect LIST_INDEX_ERROR=%d)\n", s, LIST_INDEX_ERROR);
+    ListInsert(&L3, 1, 999);
+
+
+    Reverse(&L1);
+    Reverse(&L2);
+    Reverse(&L3);
+    Reverse(&L4);
+
+    PrintList(&L1); 
+    PrintList(&L2); 
+    PrintList(&L3); 
+    PrintList(&L4); 
+
+
+
     return 0;
 }
