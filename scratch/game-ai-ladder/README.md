@@ -120,6 +120,11 @@ game-ai-ladder/
 │   ├── render.py             string rendering: grids, ANSI clear-screen
 │   └── testing.py            random-input generators (stands in for hypothesis)
 │
+├── tests/
+│   ├── __init__.py           
+│   └── test_core.py          protocol conformance: CountTo3 (Problem), Nim3 (Game)
+| 
+│
 ├── stages/
 │   ├── s00_nqueens/
 │   │   ├── README.md         why this is rung 0, the five tiers, milestones
@@ -154,7 +159,7 @@ Every rung (or sub-game) has the same internal shape:
 ```
 <game>/
 ├── README.md        history, concepts, milestones, acceptance criteria
-├── game.py          implements the Game protocol
+├── game.py          implements Problem (rungs 0–4) or Game (rungs 5+)
 ├── agents.py        this rung's agents
 ├── play.py          human-vs-AI or spectator entry point, string output
 ├── bench.py
@@ -165,33 +170,53 @@ Every rung (or sub-game) has the same internal shape:
 
 ## Shared interface
 
+Rungs 0–4 are single-agent search problems (AIMA ch. 3). Rungs 5 onward are games (AIMA ch. 5). They get separate protocols; forcing Eight Queens to answer `player()` would be meaningless.
+
+
 ```python
 # gameai/core.py
-from typing import Protocol, TypeVar, Sequence
+from typing import Protocol, TypeVar, Sequence, runtime_checkable
 
 S = TypeVar("S")   # state
-M = TypeVar("M")   # move
+M = TypeVar("A")   # action / move
 
-class Game(Protocol[S, M]):
+@runtime_checkable
+class Problem(Protocol[S, A]):
+    """Single-agent search problem. Rungs 0-4"""
+    def initial(self) -> S: ...
+    def actions(self, s: S) -> Sequence[A]: ...
+    def result(self, s: S, a: A) -> S: ...
+    def is_goal(self, s: S) -> bool: ...
+    def step_cost(self, s: S, a: A, s2: S) -> float: ...
+
+
+
+@runtime_checkable
+class Game(Protocol[S, A]):
+    """Deterministic, perfect-information, n-player game. Rung 5+."""
     def initial(self) -> S: ...
     def player(self, s: S) -> int: ...               # -1 at chance nodes
-    def legal_moves(self, s: S) -> Sequence[M]: ...
-    def apply(self, s: S, m: M) -> S: ...             # returns a new state, never mutates
+    def legal_moves(self, s: S) -> Sequence[A]: ...
+    def apply(self, s: S, a: A) -> S: ...             # returns a new state, never mutates
     def is_terminal(self, s: S) -> bool: ...
     def utility(self, s: S, player: int) -> float: ...
     def chance_outcomes(self, s: S) -> Sequence[tuple[S, float]]: ...
 
-class Agent(Protocol[S, M]):
-    def select(self, s: S) -> M: ...
+@runtime_checkable
+class Agent(Protocol[S, A]):
+    def select(self, s: S) -> A: ...
     def reset(self) -> None: ...
 
+@runtime_checkable
 class Renderer(Protocol[S]):
     def draw(self, s: S) -> str: ...                  # returns a string; the caller prints
 ```
 
-- `apply` returns a new state. Bitboards satisfy this for free; list-based states must copy.
+- `core.py` contains types only. Drivers such as `play()` and round-robin tournaments live in `gameai/eval/arena.py`.
+- `result` and `apply` return a new state. Bitboards satisfy this for free; list-based states must copy.
 - Engine, AI and rendering are strictly separated. `Renderer.draw` reads state and returns a string, nothing else.
 - All randomness goes through an injectable `random.Random(seed)`.
+- `tests/test_core.py` checks conformance with a two-step counting problem and a 3-stick Nim game. That Nim game is also the first smoke test for rung 5's minimax.
 
 ---
 
